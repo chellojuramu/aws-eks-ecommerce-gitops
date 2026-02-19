@@ -41,7 +41,7 @@ RUN chown -R devopsuser:devopsgroup /usr/src/app
 # 8. Set the running user
 USER devopsuser
 
-EXPOSE ${PRODUCT_CATALOG_PORT}
+ENV PRODUCT_CATALOG_PORT 8088
 
 # 9. Exec form ENTRYPOINT for proper signal handling in Kubernetes/EKS
 ENTRYPOINT ["./product-catalog"]
