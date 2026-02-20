@@ -30,8 +30,9 @@ RUN ./gradlew installDist -PprotoSourceDir=./proto
 # We use JRE instead of JDK to reduce the attack surface (No compilers here!)
 FROM eclipse-temurin:21-jre
 
-# DevSecOps: Create a non-root user for security (Standard for EKS/MNCs)
-RUN addgroup -S devopsgroup && adduser -S devopsuser -G devopsgroup
+# DevSecOps: Create a non-root system user and group (Ubuntu/Debian syntax)
+RUN addgroup --system devopsgroup && \
+    adduser --system --ingroup devopsgroup devopsgroup
 
 WORKDIR /usr/src/app/
 
