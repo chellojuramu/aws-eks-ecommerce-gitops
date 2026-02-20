@@ -30,17 +30,16 @@ RUN ./gradlew installDist -PprotoSourceDir=./proto
 # We use JRE instead of JDK to reduce the attack surface (No compilers here!)
 FROM eclipse-temurin:21-jre
 
-# DevSecOps: Create a non-root system user and group (Ubuntu/Debian syntax)
+# DevSecOps: Create group and user (Ubuntu/Debian Syntax)
 RUN addgroup --system devopsgroup && \
-    adduser --system --ingroup devopsgroup devopsgroup
+    adduser --system --ingroup devopsgroup devopsuser
 
 WORKDIR /usr/src/app/
 
-# 6. Optimization: Copy ONLY the compiled app from the builder
-# We don't need the source code or Gradle anymore!
-COPY --from=builder /usr/src/app/build/install/opentelemetry-demo-ad/ ./
+# Instead of separate COPY and RUN chown, do this:
+COPY --from=builder --chown=devopsuser:devopsgroup /usr/src/app/build/install/opentelemetry-demo-ad/ ./
 
-# 7. Security: Ownership transfer to non-root user
+# 7. Security: Ownership transfer (Now the user definitely exists!)
 RUN chown -R devopsuser:devopsgroup /usr/src/app/
 
 # Set the active user
